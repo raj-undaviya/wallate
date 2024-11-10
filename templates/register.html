@@ -1,0 +1,164 @@
+{% load compress %} {% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CRM - Login</title>
+
+    {% compress css %}
+    <link rel="stylesheet" href="{% static 'css/output.css' %}" />
+    {% endcompress %}
+  </head>
+
+  <body class="bg-green-50">
+    <div class="flex items-center justify-center min-h-screen">
+        <form class="h-auto max-w-sm w-full bg-white p-6 rounded-lg shadow-lg" method="post" enctype="multipart/form-data">
+          {% csrf_token %}  
+            <div class="mb-5">
+                <label
+                for="first_name"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >First Name</label
+                >
+                <input
+                type="text"
+                id="first_name"
+                name="first_name"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                required
+                />
+            </div>
+            <div class="mb-5">
+                <label
+                for="last_name"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Last Name</label
+                >
+                <input
+                type="text"
+                id="last_name"
+                name="last_name"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                required
+                />
+            </div>
+            <div class="mb-5">
+                <label
+                for="username"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Username</label
+                >
+                <input
+                type="text"
+                id="username"
+                name="username"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                required
+                />
+            </div>
+            <div class="mb-5">
+                <label
+                for="email"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Email Address</label
+                >
+                <input
+                type="email"
+                id="email"
+                name="email"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                required
+                />
+            </div>
+            <div class="mb-5">
+                <label
+                for="password"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Password</label
+                >
+                <input
+                type="password"
+                id="password"
+                name="password"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                required
+                />
+            </div>
+            <div class="mb-5">
+                <div class="input-box row-span-1 md:row-span-2">
+                    <label class="block text-gray-700 mb-2">Profile Photo</label>
+                    <div class="border p-4 rounded" id="uploadContainer">
+                        <input type="file" id="profileimg" accept="image/*" name="profileimg" class="hidden"/>
+                        <label for="profileimg" class="block text-center border border-dashed p-2 cursor-pointer">Click or drag files to upload</label>
+                        <div class="file-details mt-2" id="fileDetails"></div>
+                        <div class="progress-bar h-full bg-gray-500 mt-2" id="progressBar">
+                            <div class="h-full bg-green-500" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button
+                type="submit"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+                Submit
+            </button>
+        </form>
+    </div>
+    <script>
+        const uploadContainer = document.getElementById('uploadContainer');
+        const fileInput = document.getElementById('profileimg');
+        const fileDetails = document.getElementById('fileDetails');
+        const progressBar = document.getElementById('progressBar').firstElementChild;
+        const uploadLabel = document.getElementById("uploadLabel")
+        progressBar.style.display = "none";
+      
+        uploadContainer.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          uploadContainer.classList.add('dragover');
+        });
+      
+        uploadContainer.addEventListener('dragleave', () => {
+          uploadContainer.classList.remove('dragover');
+        });
+      
+        uploadContainer.addEventListener('drop', (e) => {
+          e.preventDefault();
+          uploadContainer.classList.remove('dragover');
+          handleFiles(e.dataTransfer.files);
+        });
+      
+        fileInput.addEventListener('change', () => {
+          handleFiles(fileInput.files);
+        });
+      
+        function handleFiles(files) {
+            progressBar.style.display = "block";
+          fileDetails.innerHTML = '';
+          
+          // Mock upload progress
+          let progress = 0;
+          const interval = setInterval(() => {
+            if (progress >= 100) {
+                clearInterval(interval);
+                progressBar.style.width = "0%"
+                Array.from(files).forEach(file => {
+                    const fileElem = document.createElement('span');
+                    fileElem.textContent = `File: ${file.name}`;
+                    fileDetails.appendChild(fileElem);
+                });
+                uploadLabel.style.display = "none"
+                progressBar.style.display = "none";
+            } else {
+              progress += 10;
+              progressBar.style.width = progress + '%';
+            }
+          }, 200);
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+  </body>
+</html>
